@@ -19,6 +19,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Enable GitHub Pages if needed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh api "repos/$GITHUB_REPOSITORY/pages" >/dev/null 2>&1; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow || true
+          fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
